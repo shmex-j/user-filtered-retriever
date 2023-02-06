@@ -18,7 +18,7 @@ data class StackOverflowUser(
                 questionsCount: $questionsCount,
                 tags: $tags,
                 linkToProfile: $linkToProfile,
-                linkToAvatar: $linkToAvatar
+                linkToAvatar: $linkToAvatar${System.lineSeparator()}
         """.trimIndent()
     }
 }

@@ -1,8 +1,7 @@
 package service
 
 import model.StackOverflowUser
-import model.StackOverflowUserDto
 
 interface UsersService {
-    fun retrieveUsers() : List<StackOverflowUser>
+    fun retrieveUsers(startPage : Long, lastPage : Long?) : List<StackOverflowUser>
 }

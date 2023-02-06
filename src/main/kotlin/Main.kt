@@ -1,16 +1,16 @@
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
-import retrofit2.Retrofit
-import retrofit2.converter.jackson.JacksonConverterFactory
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import interceptors.ApiCacheInterceptor
+import interceptors.ApiRateInterceptor
 import mapper.StackOverflowUserMapper
 import okhttp3.Cache
 import okhttp3.OkHttpClient
+import retrofit2.Retrofit
+import retrofit2.converter.jackson.JacksonConverterFactory
 import service.StackOverflowService
 import service.impl.TagPredicate
 import service.impl.UserPrimaryPredicate
-import interceptors.ApiCacheInterceptor
-import interceptors.ApiRateInterceptor
 import service.impl.UserServiceImpl
 import java.io.File
 
@@ -31,8 +31,18 @@ fun main() {
         UserPrimaryPredicate(),
         TagPredicate()
     )
+    println("Enter the starting page to search (leave blank to search from the beginning):")
+    val startPageString = readln()
+    val startPage = minOf(startPageString.toLongOrNull() ?: 1, 1)
+    println("Enter the search last page (leave blank to search to the end)\n" +
+            "WARNING! Large search ranges can result in API quota exhaustion or lengthy searches")
+    val lastPageString = readln()
+    val lastPage = lastPageString.toLongOrNull()
+    if ((lastPage ?: Long.MAX_VALUE) < startPage) {
+        throw RuntimeException("Last page must be further start page")
+    }
     println("Retrieving users data. Please wait...")
-    val users = usersService.retrieveUsers()
+    val users = usersService.retrieveUsers(startPage, lastPage)
     println("Retrieved users:\n$users")
 }
 
