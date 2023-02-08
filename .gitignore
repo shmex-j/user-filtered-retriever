@@ -6,6 +6,7 @@ build/
 
 cache
 gradle
+default-detekt-config.yml
 
 ### IntelliJ IDEA ###
 .idea

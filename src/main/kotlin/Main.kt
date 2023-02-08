@@ -39,7 +39,7 @@ fun main() {
     val lastPageString = readln()
     val lastPage = lastPageString.toLongOrNull()
     if ((lastPage ?: Long.MAX_VALUE) < startPage) {
-        throw RuntimeException("Last page must be further start page")
+        throw IllegalArgumentException("Last page must be further start page")
     }
     println("Retrieving users data. Please wait...")
     val users = usersService.retrieveUsers(startPage, lastPage)

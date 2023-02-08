@@ -1,2 +1,1 @@
-class ApiCallException(override val message : String) : RuntimeException(message) {
-}
+class ApiCallException(override val message : String) : RuntimeException(message)
