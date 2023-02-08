@@ -11,7 +11,7 @@ the list of stack overflow users meeting the following criteria:
   - [Jackson v2.14.2](https://github.com/FasterXML/jackson)
   - [Guava v31.1-jre](https://github.com/google/guava)
   - Gradle
-  - [Dtekt gradle plugin](https://github.com/detekt/detekt)
+  - [Detekt gradle plugin](https://github.com/detekt/detekt)
 
 ## SetUp Guide
 ### Setting up
