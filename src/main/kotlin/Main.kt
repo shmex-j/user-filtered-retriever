@@ -9,6 +9,7 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
 import service.StackOverflowService
+import service.UsersService
 import service.impl.TagPredicate
 import service.impl.UserPrimaryPredicate
 import service.impl.UserServiceImpl
@@ -31,6 +32,11 @@ fun main() {
         UserPrimaryPredicate(),
         TagPredicate()
     )
+
+    getAndPrintUsers(usersService)
+}
+
+private fun getAndPrintUsers(usersService: UsersService) {
     println("Enter the starting page to search (leave blank to search from the beginning):")
     val startPageString = readln()
     val startPage = minOf(startPageString.toLongOrNull() ?: 1, 1)

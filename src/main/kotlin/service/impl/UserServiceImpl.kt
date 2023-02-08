@@ -1,6 +1,6 @@
 package service.impl
 
-import ApiCallException
+import exception.ApiCallException
 import mapper.StackOverflowUserMapper
 import model.ApiResponse
 import model.StackOverflowUser
@@ -55,19 +55,12 @@ class UserServiceImpl(
             return users
         }
 
-        val call = stackOverflowService.getUsers(page, userOptions)
         waitForBackoffExpiration(backoffExpiration)
-        val response = call.execute()
-        if (!response.isSuccessful || response.body() == null) {
-            ApiCallException("Some request was unsuccessful: ${response.errorBody()}. " +
-                    "Not all users was retrieved").printStackTrace()
+        val responseBody = try {
+            retrieveUsers(page, users)
+        } catch (e : ApiCallException) {
+            e.printStackTrace()
             return users
-        }
-
-        val responseBody : ApiResponse<StackOverflowUserDto> = response.body()!!
-        val dtos = responseBody.items.filter(userPredicate::test)
-        if (dtos.isNotEmpty()) {
-            addUsers(dtos, users)
         }
 
         if (responseBody.hasMore) {
@@ -91,7 +84,24 @@ class UserServiceImpl(
         }
     }
 
-    private fun addUsers(dtos : List<StackOverflowUserDto>, users: MutableList<StackOverflowUser>) {
+    private fun retrieveUsers(page: Long, users: MutableList<StackOverflowUser>) : ApiResponse<StackOverflowUserDto> {
+        val call = stackOverflowService.getUsers(page, userOptions)
+        val response = call.execute()
+        if (!response.isSuccessful || response.body() == null) {
+            throw ApiCallException("Some request was unsuccessful: ${response.errorBody()}. " +
+                    "Not all users was retrieved")
+        }
+
+        val responseBody : ApiResponse<StackOverflowUserDto> = response.body()!!
+        val dtos = responseBody.items.filter(userPredicate::test)
+        if (dtos.isNotEmpty()) {
+            addUsersToList(dtos, users)
+        }
+
+        return responseBody
+    }
+
+    private fun addUsersToList(dtos : List<StackOverflowUserDto>, users: MutableList<StackOverflowUser>) {
         val userIds = dtos.map(StackOverflowUserDto::userId).joinToString(";")
         val tags: List<TagDto> = try {
             recursiveRetrieveTags(ArrayList(), userIds, 1, LocalDateTime.now())
